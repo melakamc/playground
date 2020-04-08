@@ -15,16 +15,19 @@ class ViewController: UIViewController {
         case normal, collapsed, expanded
     }
     
-    let normalStateOffset = 576
+    lazy var normalStateOffset = {
+       return UIScreen.main.bounds.height
+    }()
     let collapsedStateOffset = 0
-    let expandedStateOffset = 878
+    lazy var expandedStateOffset = {
+        return UIScreen.main.bounds.height * 2
+    }()
     
     var currentState: ViewState = .normal
 
     @IBOutlet weak var imgHouse: UIImageView!
     @IBOutlet weak var imgBuildings: UIImageView!
     
-    @IBOutlet weak var scBuildings: UIScrollView!
     
     @IBOutlet weak var lblCannot: UILabel!
     @IBOutlet weak var lblCan: UILabel!
@@ -32,23 +35,26 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        scrollView.setContentOffset(CGPoint(x: 0, y: normalStateOffset), animated: false)
-        
         scrollView.isPagingEnabled = true
     }
     
-    func updateUI(for state: ViewState) {
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        updateUI(for: .normal, animated: false)
+    }
+    
+    func updateUI(for state: ViewState, animated: Bool = true) {
         currentState = state
         switch state {
         case .normal:
             let offset = CGPoint(x: 0, y: normalStateOffset)
-          //  scrollView.setContentOffset(offset, animated: true)
+            scrollView.setContentOffset(offset, animated: animated)
         case .collapsed:
             let offset = CGPoint(x: 0, y: collapsedStateOffset)
-          //  scrollView.setContentOffset(offset, animated: true)
+            scrollView.setContentOffset(offset, animated: animated)
         case .expanded:
             let offset = CGPoint(x: 0, y: expandedStateOffset)
-           // scrollView.setContentOffset(offset, animated: true)
+            scrollView.setContentOffset(offset, animated: animated)
         }
     }
 }
@@ -82,15 +88,15 @@ extension ViewController: UIScrollViewDelegate {
             imgHouse.transform = transform2
         }
     }
-//    
+//
 //    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-//        
+//
 //        if velocity.y > 0.5 {
 //          //  print("Scroll up - snap")
 //            if currentState == .normal {
 //                updateUI(for: .expanded)
 //            }
-//            
+//
 //            if currentState == .collapsed {
 //                updateUI(for: .normal)
 //            }
@@ -100,7 +106,7 @@ extension ViewController: UIScrollViewDelegate {
 //            if currentState == .normal {
 //                updateUI(for: .collapsed)
 //            }
-//            
+//
 //            if currentState == .expanded {
 //                updateUI(for: .normal)
 //            }
